@@ -13,7 +13,6 @@ def main():
     parser.add_argument('--save-bed','-sb', action="store_true", help="whether save results in bed format")
     parser.add_argument('--mutual','-m', action="store_true", help="use mutual coverage instead of query coverage")
     parser.add_argument('--either','-e', action="store_true", help="if specified, only one of min-length/min-coverage needs to be satistified")
-    parser.add_argument('--same-strand','-ss', action="store_true", help="if specified, only keep hits at top strand")
     args = parser.parse_args()
     #                     0                                                      1                        2      3      4       5        6      7          8       9        10          11       12       13
     #MGYG-HGUT-00104:GUT_GENOME000545_3:16211-16742:201-461(-)	MGYG-HGUT-00047:GUT_GENOME000200_11	0.869	175	23	0	178	4	136206	136380	1.82E-50	207	260	142274
@@ -25,11 +24,7 @@ def main():
             fields = line.strip().split("\t") 
             contig_id, tstart, tend = fields[1], int(fields[8]), int(fields[9])
             qstart, qend = int(fields[6]), int(fields[7])
-            # the following assertion holds for mmseqs 13.45111, but seems not work for 15.6f452
-            assert tstart < tend          
-            if args.same_strand and (qstart > qend):
-                # exclude hits at bottom strand of --same-strand option specified
-                continue
+            assert tstart < tend
             query_length, target_length = int(fields[12]), int(fields[13])
             aligned_length = int(fields[3])
             if args.mutual:
