@@ -50,7 +50,7 @@ def get_kmer_profile(sequences):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='classify sequences based k-mer profile with lightgbm')
+    parser = argparse.ArgumentParser(description='sampling negative sequences')
     parser.add_argument('--train-positive', type=str, required=True, help='positive instance for training')
     parser.add_argument('--train-negative', type=str, required=True, help="negative instance for training")
     parser.add_argument('--test-positive', type=str, required=True, help='positive instance for testing')

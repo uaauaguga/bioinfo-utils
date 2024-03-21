@@ -18,6 +18,7 @@ def main():
     parser = argparse.ArgumentParser(description="Convert Infernal hits to gff format")
     parser.add_argument('--input','-i', help="Infernal tabular format", required=True)
     parser.add_argument('--output','-o', help="Output bed file",required=True)
+    parser.add_argument('--no-truncation','-nt', action = "store_true", help="Whether allow truncation")
     args = parser.parse_args()
 
     fout = open(args.output,"w")
@@ -48,26 +49,34 @@ def main():
             # 17. target description flag=1 multi=2.0000 len=538
             #  k119_23629           -         5S_rRNA              RF00001   hmm        3      117      265      151      -     -    6 0.50   0.0   72.2   6.4e-18 !   flag=1 multi=2.0000 len=538
             fields = re.split("\s+",line)
+            if fields[16] != "!":
+                continue
             cm_name, cm_id, seq_id = fields[2], fields[3], fields[0]
             mdl_start, mdl_end = int(fields[5]),int(fields[6])
             seq_start, seq_end = int(fields[7]),int(fields[8])
             strand = fields[9]
             trunc = fields[10]       
+            if (args.no_truncation) and (trunc != "no"):
+                continue
             gc = fields[12]
             bias = fields[13]
             score = fields[14]
             e_value = fields[15]
+            if seq_start == seq_end:
+                continue
             if seq_start > seq_end:
                 seq_start, seq_end = seq_end, seq_start
-                assert strand == "-"
+                assert strand == "-", line
             else:
-                assert strand == "+"
+                assert strand == "+", line
             attrs = {"ID":cm_id,
                      "RNA_name":cm_name,
                      "trunc":trunc,
                      "gc":gc,
                      "bias":bias,
                      "e_value":e_value}
+            if len(fields) >= 17:
+                attrs["desc"] = " ".join(fields[17:])
             print(seq_id, 
                   "Infernal","ncRNA", 
                   seq_start,seq_end,score,

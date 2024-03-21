@@ -1,27 +1,34 @@
 #!/usr/bin/env python
-from tqdm import tqdm
 import argparse
+import os
 
-parser = argparse.ArgumentParser(description='Split Rfam seed alignments, each RNA family as a stockholm format file.')
-parser.add_argument('--input', '-i',required=True,help="Input path")
-parser.add_argument('--outdir','-o',required=True,help="Output path")
-args = parser.parse_args()
+def main():
+    parser = argparse.ArgumentParser(description='Split Rfam seed alignments, each RNA family as a stockholm format file.')
+    parser.add_argument('--input', '-i',required=True,help="Input path")
+    parser.add_argument('--outdir','-o',required=True,help="Output path")
+    args = parser.parse_args()
+
+    if not os.path.exists(args.outdir):
+        os.mkdir(args.outdir)
+
+    #cope with rfam seed alignment encoding
+    with open(args.input,encoding="ISO-8859-1") as f:
+        content = ""
+        for line in f:
+            if line.startswith('#=GF AC'):
+                # update accession of the entry
+                accession = line.split()[-1]
+            elif line.startswith("#=GF ID"):
+                name = line.split()[-1]
+                accession = accession + "__" + name
+            content += line
+            if line.startswith("//"):
+                fout = open(os.path.join(args.outdir,accession+".stk"),"w")
+                fout.write(content)
+                fout.close()
+                content = ""
 
 
-inSeed = args.input
-outDir = args.outdir
-with open(inSeed,encoding="ISO-8859-1") as f:
-    content = None
-    accession = 'NA'
-    for lineno, line in tqdm(enumerate(f)):
-        if line.startswith('# STOCKHOLM 1.0'):
-            if content:
-                content = ''.join(content)
-                with open(outDir+"/{}.stk".format(accession),"w") as f:
-                    f.write(content)
-            content = []
-        elif line.startswith('#=GF AC'):
-            accession = line.split()[-1]
-            
-        content.append(line)
+if __name__ == "__main__":
+    main()
 

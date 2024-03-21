@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)s] %(
 logger = logging.getLogger('Leiden Community Detection')
 
 
-def load_graph(path):
+def load_graph(path,max_evalue=0.01):
     node_index = 0
     node_index_lut = OrderedDict()
     edges = [] 
@@ -20,16 +20,16 @@ def load_graph(path):
             # query, target, fident, alnlen, mismatch, gapopen, qstart, qend, tstart, tend, evalue, bits
             fields = line.strip().split("\t")
             query, target, fident, alnlen, mismatch, gapopen, qstart, qend, tstart, tend, evalue,bits = fields
+            if float(evalue) > max_evalue:
+                continue
             qstart, qend, tstart, tend = int(qstart), int(qend), int(tstart), int(tend)
             if query == target:
                 continue
             if qstart > qend:
-                # input sequences are known to have same strandness 
-                # logger.warning(f"{query}-{target}: query start position is greater than end position, skip it .")
+                #logger.warning(f"{query}-{target}: query start position is greater than end position, skip it .")
                 continue
             if tstart > tend:
-                # such case not exists for mmseqs output
-                # logger.warning(f"{query}-{target}: target start position is greater than end position, skip it .")
+                #logger.warning(f"{query}-{target}: target start position is greater than end position, skip it .")
                 continue
             if query in node_index_lut:
                 index_1 = node_index_lut[query]

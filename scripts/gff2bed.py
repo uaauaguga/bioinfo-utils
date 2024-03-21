@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import argparse
+from tqdm import tqdm
 import sys 
+
 
 def parseAttr(s):
     info = {}
@@ -10,9 +12,13 @@ def parseAttr(s):
         if len(data) == 0:
             continue
         if "=" in data:
-            key,value = data.split("=")
+            #key, value = data.split("=")
+            p = data.find("=")
+            key, value = data[:p], data[p+1:]
         else:
-            key,value = data.split(" ")
+            #key,value = data.split(" ")
+            p = data.find(" ")
+            key, value = data[:p], data[p+1:]
         key = key.replace('"','')
         value = value.replace('"','')
         info[key] = value
@@ -24,28 +30,34 @@ def main():
     parser = argparse.ArgumentParser(description='Convert gff3 format to bed format')
     parser.add_argument('--gff', '-g', type=str, required=True, help='Input gff3 file')
     parser.add_argument('--bed','-b',type=str, required=True, help='Output bed file')
-    parser.add_argument('--feature','-f',type=str, required=True, help="Keep records in gff3 file where column 3 equal to this value")
-    parser.add_argument('--name','-n',type=str, required=True, help="Use this field in gff column 9 as feature name in bed file")
+    parser.add_argument('--feature','-f',type=str, help="Keep records in gff3 file where column 3 equal to this value")
+    parser.add_argument('--name','-n', type=str , help="Use this field in gff column 9 as feature name in bed file, can be multiple value separated by coma")
+    parser.add_argument('--value','-v', type=str , help="Use this field in gff column 9 as feature value in bed file")
+    parser.add_argument('--keep-feature','-kf', action="store_true" , help="Keep feature in the name field")
     args = parser.parse_args()
     fin = open(args.gff)
-    if args.bed == "-":
-        fout = sys.stdout
-    else:
-        fout = open(args.bed,"w")
-    args.name = args.name.split(",")
-    for line in fin:
+    fout = open(args.bed,"w")
+    for line in tqdm(fin):
         if line.startswith("#"):
             continue
         fields = line.strip().split("\t")
-        if fields[2] != args.feature:
+        if (args.feature is not None) and ( fields[2] != args.feature):
             continue
         name = []
+        if args.keep_feature:
+            name.append(fields[2])
         attrs = parseAttr(fields[8])
-        for k in args.name:
-            name.append(attrs[k])
+        if args.name is not None:
+            for k in args.name.split(","):
+                name.append(attrs[k])
         name = "-".join(name)
+        value = []
+        if args.value is not None:
+            for k in args.value.split(","):
+                value.append(attrs[k])
+        value = ",".join(value)
         chrom, start, end, strand = fields[0], int(fields[3]) - 1, int(fields[4]), fields[6]
-        print(f"{chrom}\t{start}\t{end}\t{name}\t.\t{strand}",file=fout) 
+        print(f"{chrom}\t{start}\t{end}\t{name}\t{value}\t{strand}",file=fout) 
     fout.close()
         
 
