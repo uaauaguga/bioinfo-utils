@@ -13,7 +13,7 @@
 - combined table: `scripts/concatenate-table.py`
 - group table by customized group id extractor
   - `scripts/group-text.py`
-  - Line correspond to the same group should be consective
+  - Line correspond to the same group should be consecutive
   - `scripts/group-text.py -i pairwise.0309.txt -e 'lambda x:x.split(":GCF")[0]' -r 'lambda x,n:x.split(":")[0] +"-" + str(n).zfill(5)' -wh -od pairwise.0309`
 
 ## Tabular data reformatting
