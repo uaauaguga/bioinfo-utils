@@ -11,7 +11,10 @@
 - split stockholm format alignment: `scripts/split-stockholm.py`
 - split covarience models: `scripts/split-cm-models.py`
 - combined table: `scripts/concatenate-table.py`
-
+- group table by customized group id extractor
+  - `scripts/group-text.py`
+  - Line correspond to the same group should be consective
+  - `scripts/group-text.py -i pairwise.0309.txt -e 'lambda x:x.split(":GCF")[0]' -r 'lambda x,n:x.split(":")[0] +"-" + str(n).zfill(5)' -wh -od pairwise.0309`
 
 ## Tabular data reformatting
 - reformat fragGeneScan results: `scripts/fgs2bed.py` 
@@ -31,13 +34,17 @@
 
 ## Homolog search
 - Homolog search with mmseqs
-  - RNA search: scripts/RNA-homolog-search.py
-  - protein search: scripts/protein-homolog-search.py
+  - RNA search: `scripts/RNA-homolog-search.py`
+  - protein search: `scripts/protein-homolog-search.py`
 
 - filter mmseqs hits in blast+ format
   - `scripts/filter-hits.py`
 
 ## Sequence cluster processing
+
+- clustering pairwise search results with MCL algorithm
+  - `scripts/mcl-clustering.py`
+ 
 - clustering pairwise search results with leiden algorithm
   - `scripts/leiden-partitioning.py`
  
@@ -48,7 +55,20 @@
   - `scripts/mcl-to-clustering-table.py`
 
 - group sequence by clustering table
+  - `scripts/group-sequences.py`
+ 
 
-- group-sequences.py  
-- cmfinder-search.py  
+## k-mer related analysis
+
+- count kmer frequency: `scripts/kmer-frequency-fitter.py`
+- simulate sequence from kmer frequency: `scripts/kmer-emitter.py`
+
+- classify sequences with kmer composition: 
+  - `kmer-profile-classification.py`
+  - `scripts/kmer-profile-inference.py`
+ 
+## Sequence shuffling
+- shuffle sequence while preserve kmer frequency: `scripts/kmer-preserved-shuffling.py`
+- shuffled homolog sequence while preserve phylogenetic signal: `scripts/phylogeny-preserved-shuffling.py`
+
 
