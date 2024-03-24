@@ -64,7 +64,11 @@
   - `scripts/annotate-intervals.py`
 
 - Pick local max of overlapping intervals
+  - seems not implement by bed tools
   - `scripts/pick-local-max.py`
+
+- Pick local max from bedgraph like format
+  - `scripts/pick-local-max-all-bins.py`
 
 - Select mutual closest features in 2 bed files, now used for transcription unit determination
   - `scripts/extract-transcription-unit-from-genome.py` 
