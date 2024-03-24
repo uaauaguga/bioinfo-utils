@@ -56,6 +56,18 @@
 
 - group sequence by clustering table
   - `scripts/group-sequences.py`
+
+
+## Interval manipulation
+
+- Annotate genomic context of specified interval in a prokaryote genome given gene bed file
+  - `scripts/annotate-intervals.py`
+
+- Pick local max of overlapping intervals
+  - `scripts/pick-local-max.py`
+
+- Select mutual closest features in 2 bed files, now used for transcription unit determination
+  - `scripts/extract-transcription-unit-from-genome.py` 
  
 
 ## k-mer related analysis
