@@ -13,15 +13,27 @@ def main():
     parser.add_argument('--output-prefix', '-op', type=str, required=True, help="Output shuffled sequence in fasta format")
     parser.add_argument('--number', '-n', type=int, default=50, help="Number of shuffling")
     args = parser.parse_args()        
+
+    logger.info("rename input sequence ...")
+    frename = open(args.input + ".renamed","w")
+    i = 0
+    seq_ids = []
+    with open(args.input) as f:
+        for line in f:
+            if line.startswith(">"):
+                seq_id = line[1:].split(" ")[0]
+                seq_ids.append(seq_id)
+                line = f">{i}\n" 
+                i += 1
+            frename.write(line)
+    frename.close()
+                
     
     logger.info("align input sequence ...")
     falignment = open(args.input + ".aligned.aln","w")
-    cmd = ["mafft","--auto", "--clustalout", args.input]
+    cmd = ["mafft","--auto", "--clustalout", args.input + ".renamed"]
     proc = subprocess.run(cmd, stdout=falignment, stderr = subprocess.DEVNULL)
     falignment.close()     
-    #cmd = ["esl-reformat", "-o", args.input + ".aligned.aln", "clustal", args.input + ".aligned.fa"]
-    #print(" ".join(cmd))
-    #subprocess.run(cmd)
 
     shuffled_path = args.input + ".aligned.shuffled.fa"
     logger.info("shuffling ...")
@@ -49,7 +61,7 @@ def main():
                 sequences[seq_id] += line.strip().replace("-","")
         fout = open(args.output_prefix + f".{i}.fa","w")
         for seq_id in sorted(sequences.keys()):
-            print(f">{seq_id}",file=fout)
+            print(f">shuffled-{seq_ids[int(seq_id)]}",file=fout)
             print(sequences[seq_id],file=fout)
         fout.close()
         i += 1
@@ -58,6 +70,7 @@ def main():
     logger.info("clean up ...")
     os.remove(args.input + ".aligned.aln")
     os.remove(shuffled_path)
+    os.remove(args.input + ".renamed")
     logger.info("all done.")
 
 if __name__ == "__main__":
