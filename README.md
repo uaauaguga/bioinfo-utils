@@ -7,6 +7,7 @@
 - assign multiple files into multiple chunks: `scripts/chunkify-fasta.py`  
 - combined multple fasta file in a single one: `scripts/combine-fasta.py`  
 - chunkify a fasta file: `scripts/split-fasta.py`  
+- split fasta by prefix `scripts/split-fasta-by-prefix.py`
 - chunkify a text file: `scripts/split-text.py`
 - split stockholm format alignment: `scripts/split-stockholm.py`
 - split covarience models: `scripts/split-cm-models.py`
