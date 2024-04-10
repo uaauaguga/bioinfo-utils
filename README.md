@@ -32,6 +32,9 @@
 - drop sequence with the same id: `scripts/drop-sequence-with-same-id.py`
 - rename sequence in input fasta file `scripts/rename-fasta.py`
 
+- convert proteins predicted by prodigal to bed format `prodigal-faa2bed.py`
+
+
 ## Homolog search
 - Homolog search with mmseqs
   - RNA search: `scripts/RNA-homolog-search.py`

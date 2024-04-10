@@ -49,12 +49,12 @@ def main():
         attrs = parseAttr(fields[8])
         if args.name is not None:
             for k in args.name.split(","):
-                name.append(attrs[k])
-        name = "-".join(name)
+                name.append(attrs.get(k,"."))
+        name = ",".join(name)
         value = []
         if args.value is not None:
             for k in args.value.split(","):
-                value.append(attrs[k])
+                value.append(attrs.get(k,"."))
         value = ",".join(value)
         chrom, start, end, strand = fields[0], int(fields[3]) - 1, int(fields[4]), fields[6]
         print(f"{chrom}\t{start}\t{end}\t{name}\t{value}\t{strand}",file=fout) 
