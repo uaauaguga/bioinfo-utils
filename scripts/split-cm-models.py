@@ -6,6 +6,7 @@ def main():
     parser = argparse.ArgumentParser(description='Split Rfam seed alignments, each RNA family as a stockholm format file.')
     parser.add_argument('--input', '-i',required=True,help="Input path")
     parser.add_argument('--outdir','-o',required=True,help="Output path")
+    parser.add_argument('--use-name','-un', action = 'store_true',help="Use name instaed of accession")
     args = parser.parse_args()
 
     if not os.path.exists(args.outdir):
@@ -22,9 +23,18 @@ def main():
                 accession = accession + "__" + name
             content += line
             if line.startswith("//"):
-                fout = open(os.path.join(args.outdir,accession+".cm"),"w")
-                fout.write(content)
-                fout.close()
+                if not content.strip().startswith("INFERNAL"):
+                    print(name)
+                    if not args.use_name:
+                        path = os.path.join(args.outdir,accession+".cm")
+                    else:
+                        path = os.path.join(args.outdir,name+".cm")
+                    fout = open(path,"w")
+                    fout.write(content0)
+                    fout.write(content)
+                    fout.close()
+                else:
+                    content0 = content
                 content = ""
 
 

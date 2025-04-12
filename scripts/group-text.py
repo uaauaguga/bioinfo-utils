@@ -31,7 +31,7 @@ def main():
             if group_id != last_group_id:
                 if fout is not None:
                     fout.close() 
-                fout = open(os.path.join(args.output_directory, name + "." + suffix),"w")
+                fout = open(os.path.join(args.output_directory, name + "." + suffix),"a")
                 if header is not None:
                     fout.write(header)
                 n += 1
